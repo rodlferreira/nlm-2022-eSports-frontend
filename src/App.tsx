@@ -10,8 +10,7 @@ function App() {
   const [games, setGames] = useState([])
 
   useEffect(() => {
-    fetch('http://localhost:3333/games', {method: 'POST', headers: {'content-type': 'application/json', 'Access-Control-Allow-Origin': '*'}}
-    )
+    fetch('http://localhost:3333/games')
       .then(response => response.json())
       .then(data => {
         console.log('verificando o data', data);
