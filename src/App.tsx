@@ -4,17 +4,37 @@ import logoImg from './assets/logo-nlw.svg';
 import { GameBanner } from './components/GameBanner';
 import { CreateAdBanner } from './components/CreateAdBanner';
 import { useEffect, useState } from 'react';
+import axios from 'axios';
+
+
+interface Game {
+  id: string;
+  title: string;
+  bannerUrl: string;
+  _count: {
+    ads: number;
+  }
+}
 
 function App() {
 
-  const [games, setGames] = useState([])
+  const [games, setGames] = useState<Game[]>([])
+  const api = axios.create({
+    baseURL: 'http://localhost:3333/games',
+  });
 
   useEffect(() => {
-    fetch('http://localhost:3333/games')
-      .then(response => response.json())
-      .then(data => {
-        console.log('verificando o data', data);
+    api
+      .get('http://localhost:3333/games')
+      .then((response) => setGames(response.data))
+      .catch((err => {
+        console.log("Errou" + err);
       })
+        // fetch('http://localhost:3333/games')
+        //   .then(response => response.json())
+        //   .then(data => {
+        //     setGames(data)
+      )
   }, [])
 
   return (
@@ -26,13 +46,16 @@ function App() {
       </h1>
 
       <div className="grid grid-cols-6 gap-6 mt-16">
-
-        <GameBanner bannerUrl='/game 1.png' title='League of Legends' adsCount={5} />
-        <GameBanner bannerUrl='/game 2.png' title='Dota 2' adsCount={2} />
-        <GameBanner bannerUrl='/game 3.png' title='CS Go' adsCount={7} />
-        <GameBanner bannerUrl='/game 5.png' title='Apex Legends' adsCount={1} />
-        <GameBanner bannerUrl='/game 6.png' title='Fortnite' adsCount={4} />
-        <GameBanner bannerUrl='/game 7.png' title='World of warcraft' adsCount={12} />
+        {games.map(game => {
+          return (
+            <GameBanner
+              key={game.id}
+              title={game.title}
+              bannerUrl={game.bannerUrl}
+              adsCount={game._count.ads}
+            />
+          )
+        })}
 
 
       </div>
